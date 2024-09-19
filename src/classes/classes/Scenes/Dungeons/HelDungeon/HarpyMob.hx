@@ -1,0 +1,186 @@
+package classes.scenes.dungeons.helDungeon;
+
+import classes.*;
+import classes.bodyParts.Butt;
+import classes.bodyParts.Hips;
+import classes.bodyParts.LowerBody;
+import classes.bodyParts.Tail;
+import classes.scenes.SceneLib;
+
+class HarpyMob extends Monster
+{
+    public function harpyHordeAI() : Void
+    {
+        if (rand(3) == 0)
+        {
+            harpyHordeLustAttack();
+        }
+        else if (rand(3) > 0)
+        {
+            harpyHordeClawFlurry();
+        }
+        else
+        {
+            harpyHordeGangBangAttack();
+        }
+    }
+    
+    //ATTACK ONE: Claw Flurry
+    public function harpyHordeClawFlurry() : Void
+    {
+        outputText("The harpies lunge at you, a veritable storm of talons and claws raining down around you.  You stumble back, trying desperately to deflect some of the attacks, but there are simply too many to block them all!  Only a single harpy in the brood seems to be holding back...\n");
+        //(Effect: Multiple light attacks)
+        createStatusEffect(StatusEffects.Attacks, 3 + rand(3), 0, 0, 0);
+        eAttack();
+    }
+    
+    //ATTACK TWO: Gangbang
+    public function harpyHordeGangBangAttack() : Void
+    {
+        outputText("Suddenly, a pair of harpies grabs you from behind, holding your arms to keep you from fighting back! Taking advantage of your open state, the other harpies leap at you, hammering your chest with punches and kicks - only one hangs back from the gang assault.\n\n");
+        player.createStatusEffect(StatusEffects.HarpyBind, 0, 0, 0, 0);
+        //(PC must struggle:
+        harpyHordeGangBangStruggle(false);
+    }
+    
+    public function harpyHordeGangBangStruggle(clearDisp : Bool = true) : Void
+    {
+        if (clearDisp)
+        {
+            clearOutput();
+        }
+        //Success:
+        if ((rand(10) == 0 && player.str / 5 + rand(20) >= 23) || player.hasPerk(PerkLib.FluidBody))
+        {
+            player.removeStatusEffect(StatusEffects.HarpyBind);
+            outputText("With a mighty roar, you throw off the harpies grabbing you and return to the fight!");
+        }
+        //Failure:
+        else
+        {
+            //If fail:{
+                var damage : Float = 80 + rand(40);
+                outputText("You struggle in the harpies' grasp, but can't quite get free.  The brood continues to hammer away at your defenseless self. ");
+                damage = player.takePhysDamage(damage, true);
+            }
+        }
+    }
+    
+    //ATTACK THREE: LUSTY HARPIES!
+    public function harpyHordeLustAttack() : Void
+    {
+        outputText("The harpies back off for a moment, giving you room to breathe - only to begin a mini strip-tease, pulling off bits of clothing to reveal their massive asses and hips or bearing their small, perky tits.  They caress themselves and each other, moaning lewdly.  Distracted by the burlesque, you don't notice a lipstick-wearing harpy approach you until it's too late!  She plants a kiss right on your lips, ");
+        if (player.hasPerk(PerkLib.LuststickAdapted))
+        {
+            outputText("doing relatively little thanks to your adaptation");
+        }
+        else
+        {
+            outputText("sending shivers of lust up your spine");
+            player.takeLustDamage(5, true);
+            if (player.hasCock())
+            {
+                player.takeLustDamage(15, true);
+            }
+        }
+        outputText(".");
+        player.takeLustDamage(10, true);
+    }
+    
+    override private function performCombatAction() : Void
+    {
+        harpyHordeAI();
+    }
+    
+    override public function defeated(hpVictory : Bool) : Void
+    {
+        SceneLib.dungeons.heltower.pcDefeatsHarpyHorde();
+    }
+    
+    override public function won(hpVictory : Bool, pcCameWorms : Bool) : Void
+    {
+        if (player.isGargoyle())
+        {
+            SceneLib.dungeons.heltower.gargoyleBadEndPhoenixTower();
+        }
+        else
+        {
+            SceneLib.dungeons.heltower.pcLosesToHarpyHorde();
+        }
+    }
+    
+    public function new()
+    {
+        super();
+        this.a = "the ";
+        this.short = "harpy horde";
+        this.imageName = "harpymob";
+        this.long = "You are surrounded by a wing of particularly large and muscular harpies, perhaps a dozen of them in total.  All of them are clad in simple brown shifts that give them good camouflage in the mountains, and are using their talon-like claws as weapons against you. While not a great threat to a champion of your ability individually, a whole brood of them together is... something else entirely.";
+        this.plural = true;
+        this.pronoun1 = "they";
+        this.pronoun2 = "them";
+        this.pronoun3 = "their";
+        this.createVagina(false, VaginaClass.WETNESS_SLAVERING, VaginaClass.LOOSENESS_GAPING_WIDE);
+        createBreastRow(Appearance.breastCupInverse("B"));
+        this.ass.analLooseness = AssClass.LOOSENESS_STRETCHED;
+        this.ass.analWetness = AssClass.WETNESS_SLIME_DROOLING;
+        this.tallness = rand(8) + 70;
+        this.hips.type = Hips.RATING_CURVY + 2;
+        this.butt.type = Butt.RATING_LARGE;
+        this.lowerBody = LowerBody.HARPY;
+        this.skin.setBaseOnly({
+                    color : "red"
+                });
+        this.skinDesc = "feathers";
+        this.hairColor = "black";
+        this.hairLength = 15;
+        initStrTouSpeInte(89, 107, 170, 52);
+        initWisLibSensCor(52, 86, 49, 0);
+        this.weaponName = "claw";
+        this.weaponVerb = "claw";
+        this.weaponAttack = 39;
+        this.armorName = "armor";
+        this.armorDef = 22;
+        this.armorMDef = 3;
+        this.bonusHP = 1000;
+        this.bonusLust = 167;
+        this.lust = 20;
+        this.lustVuln = .2;
+        this.level = 32;
+        this.gems = rand(25) + 140;
+        this.additionalXP = 50;
+        this.tailType = Tail.HARPY;
+        this.drop = NO_DROP;
+        this.abilities = [
+                {
+                    call : eAttack,
+                    type : ABILITY_PHYSICAL,
+                    range : RANGE_MELEE,
+                    tags : [TAG_BODY]
+                }, 
+                {
+                    call : harpyHordeClawFlurry,
+                    type : ABILITY_PHYSICAL,
+                    range : RANGE_MELEE,
+                    tags : [TAG_BODY]
+                }, 
+                {
+                    call : harpyHordeGangBangAttack,
+                    type : ABILITY_PHYSICAL,
+                    range : RANGE_MELEE,
+                    tags : [TAG_BODY]
+                }, 
+                {
+                    call : harpyHordeLustAttack,
+                    type : ABILITY_TEASE,
+                    range : RANGE_MELEE,
+                    tags : [TAG_BODY]
+                }
+        ];
+        this.createPerk(PerkLib.EnemyGroupType, 0, 0, 0, 0);
+        this.createStatusEffect(StatusEffects.Flying, 50, 0, 0, 0);
+        checkMonster();
+    }
+}
+
+

@@ -1,0 +1,327 @@
+/**
+ * ...
+ * @author Liadri
+ */
+package classes.scenes.areas.forest;
+
+import classes.*;
+import classes.bodyParts.Butt;
+import classes.bodyParts.Hips;
+import classes.bodyParts.LowerBody;
+import classes.scenes.Holidays;
+import classes.scenes.SceneLib;
+import classes.display.SpriteDb;
+import classes.internals.WeightedDrop;
+import coc.view.CoCButton;
+
+class Alraune extends Monster
+{
+    public function trapLevel(adjustment : Float = 0) : Float
+    {
+        if (!hasStatusEffect(StatusEffects.Level))
+        {
+            createStatusEffect(StatusEffects.Level, 6, 0, 0, 0);
+        }
+        if (adjustment != 0)
+        {
+            addStatusValue(StatusEffects.Level, 1, adjustment);
+            if (statusEffectv1(StatusEffects.Level) < 1)
+            {
+                changeStatusValue(StatusEffects.Level, 1, 1);
+            }
+            if (statusEffectv1(StatusEffects.Level) > 6)
+            {
+                changeStatusValue(StatusEffects.Level, 1, 6);
+            }
+        }
+        return statusEffectv1(StatusEffects.Level);
+    }
+    
+    public function alrauneStruggle() : Void
+    {
+        clearOutput();
+        if (this.short == "snow lily alraune")
+        {
+            game.spriteSelect(SpriteDb.s_snow_lily);
+        }
+        else if (this.short == "cinderbloom alraune")
+        {
+            game.spriteSelect(SpriteDb.s_cinderbloom);
+        }
+        else
+        {
+            game.spriteSelect(SpriteDb.s_alraune);
+        }
+        outputText("You struggle against ");
+        if (Holidays.isHalloween())
+        {
+            outputText("Jack-O-Raune");
+        }
+        else
+        {
+            outputText("the " + this.short + "");
+        }
+        outputText(" vines, forcefully pulling yourself a good distance away from her.\n\n");
+        trapLevel(2);
+        player.fatigue += 50;
+    }
+    
+    public function alraunePollenCloud() : Void
+    {
+        if (Holidays.isHalloween())
+        {
+            outputText("Jack-O-Raune");
+        }
+        else
+        {
+            outputText("The alraune");
+        }
+        outputText(" giggles as she unleashes a thick cloud of pollen in your general direction.\n\n");
+        outputText("\"<i>Just give in to me. I will make it so pleasurable for you.</i>\"\n\n");
+        outputText("There is no way you will be able to not breathe it in and you feel your desire rise as the insidious aphrodisiac does its dirty work.\n\n");
+        createStatusEffect(StatusEffects.LustAura, 0, 0, 0, 0);
+    }
+    
+    public function alrauneStrangulate() : Void
+    {
+        if (Holidays.isHalloween())
+        {
+            outputText("Jack-O-Raune");
+        }
+        else
+        {
+            outputText("The alraune");
+        }
+        outputText("’s vines suddenly wrap tight around your neck and strangle you, preventing you from pronouncing any incantations. The ");
+        if (Holidays.isHalloween())
+        {
+            outputText("pumpkin");
+        }
+        else
+        {
+            outputText("plant");
+        }
+        outputText(" woman gives you an annoyed glare.");
+        outputText("\"<i>I’m done with your magic. Be a good " + player.mf("boy", "girl") + " and just give in.</i>\"");
+        player.removeStatusEffect(StatusEffects.CastedSpell);
+        player.createStatusEffect(StatusEffects.Sealed, 2, 10, 0, 0);
+    }
+    
+    public function alrauneTeaseAttack() : Void
+    {
+        if (rand(2) == 1)
+        {
+            if (Holidays.isHalloween())
+            {
+                outputText("Jack-O-Raune");
+            }
+            else
+            {
+                outputText("The alraune");
+            }
+            outputText(" parts her grass-like hair away to reveal her supple breasts, moving her other hand to her nectar drenched pussy then back to her mouth. She sensually licks her fingers clean, then blows you a kiss.\n\n");
+            outputText("\"<i>Don’t you want a taste of what my lovely body can offer? It is all yours to play with, all you need to do is give in to me.</i>\"\n\n");
+        }
+        else
+        {
+            if (Holidays.isHalloween())
+            {
+                outputText("Jack-O-Raune");
+            }
+            else
+            {
+                outputText("The alraune");
+            }
+            outputText(" grabs some of her nectar suggestively, letting it flow all over her breast, thigh and even in her hair.\n\n");
+            outputText("\"<i>Mmmmmmm I so love being covered in sticky fluids. How about you?</i>\"\n\n");
+        }
+        outputText("Unable to take your gaze away from her lewd show, you feel yourself getting more aroused. ");
+        var lustDmg : Int = as3hx.Compat.parseInt(rand(player.lib / 20) + rand(this.lib / 10) + 10);
+        player.takeLustDamage(lustDmg, true);
+        outputText("\n\n");
+    }
+    
+    public function alrauneHaloweenSpecial() : Void
+    {
+        outputText("The Jack-O-Raune suddenly starts laughing and throwing small pumpkins at you. They explode upon contact splashing you with what seems to be aphrodisiac.\n\n");
+        alrauneHaloweenSpecial1();
+        alrauneHaloweenSpecial1();
+        alrauneHaloweenSpecial1();
+    }
+    public function alrauneHaloweenSpecial1() : Void
+    {
+        if (player.getEvasionRoll())
+        {
+            outputText("The pumpkin miss you by a few inch.\n");
+        }
+        else
+        {
+            var damage : Int = as3hx.Compat.parseInt(5 + rand(20));
+            damage = Math.round(damage);
+            var lustDmg : Int = as3hx.Compat.parseInt(rand(player.lib / 25) + rand(this.lib / 15) + 5);
+            lustDmg = Math.round(lustDmg);
+            outputText("You are hit by a pumpkin for " + damage + " damage! " + lustDmg + " lust damage!");
+            damage = player.takePhysDamage(damage, true);
+            player.takeLustDamage(lustDmg, true);
+            outputText("\n");
+        }
+    }
+    
+    override public function preAttack() : Void
+    {
+        if (hasStatusEffect(StatusEffects.Level))
+        {
+            outputText("It’s all or nothing!  If this leafy woman is so keen on pulling you in, you will let her do just that!  You use her own strength against her, using it to increase your momentum as you leap towards her and smash into her with your weapon!  ");
+            trapLevel(-6);
+        }
+    }
+    
+    override public function postPlayerBusyBtnSpecial(btnSpecial1 : CoCButton, btnSpecial2 : CoCButton) : Void
+    {
+        if (player.fatigueLeft() < 50)
+        {
+            btnSpecial1.disable("You're too tired to struggle.");
+        }
+        else
+        {
+            btnSpecial1.show("Struggle", SceneLib.combat.wait2, "Struggle to forcefully pull yourself a good distance away from plant woman.");
+        }
+    }
+    
+    override private function performCombatAction() : Void
+    {
+        if (hasStatusEffect(StatusEffects.Level))
+        {
+            if (!hasStatusEffect(StatusEffects.Stunned) && player.hasStatusEffect(StatusEffects.CastedSpell))
+            {
+                alrauneStrangulate();
+            }
+            else if (Holidays.isHalloween())
+            {
+                var choice1 : Float = rand(3);
+                if (choice1 == 0)
+                {
+                    alrauneTeaseAttack();
+                }
+                if (choice1 == 1)
+                {
+                    if (!hasStatusEffect(StatusEffects.LustAura))
+                    {
+                        alraunePollenCloud();
+                    }
+                    else
+                    {
+                        alrauneTeaseAttack();
+                    }
+                }
+                if (choice1 == 2)
+                {
+                    alrauneHaloweenSpecial();
+                }
+            }
+            else
+            {
+                var choice2 : Float = rand(2);
+                if (choice2 == 0)
+                {
+                    alrauneTeaseAttack();
+                }
+                if (choice2 == 1)
+                {
+                    if (!hasStatusEffect(StatusEffects.LustAura))
+                    {
+                        alraunePollenCloud();
+                    }
+                    else
+                    {
+                        alrauneTeaseAttack();
+                    }
+                }
+            }
+            if (!hasStatusEffect(StatusEffects.Climbed))
+            {
+                outputText("\n\nMeanwhile the vines keep pulling you toward the pitcher.");
+                trapLevel(-1);
+            }
+            else
+            {
+                removeStatusEffect(StatusEffects.Climbed);
+            }
+        }
+        else
+        {
+            super.performCombatAction();
+        }
+    }
+    
+    override public function defeated(hpVictory : Bool) : Void
+    {
+        SceneLib.forest.alrauneScene.alrauneDeepwoodsWon();
+    }
+    
+    override public function won(hpVictory : Bool, pcCameWorms : Bool) : Void
+    {
+        SceneLib.forest.alrauneScene.alrauneDeepwoodsLost();
+    }
+    
+    public function new()
+    {
+        super();
+        if (Holidays.isHalloween())
+        {
+            this.a = "";
+            this.short = "Jack-O-Raune";
+            this.long = "You are fighting against a Jack-O-Raune, an intelligent plant with the torso of a woman and the lower body of a giant pumpkin with snaking tentacle vines. She seems really keen on raping you.";
+            this.bodyColor = "pale orange";
+            this.hairColor = "green";
+        }
+        else
+        {
+            this.a = "an ";
+            this.short = "alraune";
+            this.long = "You are fighting against an Alraune, an intelligent plant with the torso of a woman and the lower body of a giant flower. She seems really keen on raping you.";
+            this.bodyColor = "light green";
+            this.hairColor = "dark green";
+        }
+        initStrTouSpeInte(30, 420, 30, 180);
+        initWisLibSensCor(180, 300, 150, 10);
+        this.armorDef = 300;
+        this.armorMDef = 60;
+        this.bonusHP = 1000;
+        this.bonusLust = 502;
+        this.level = 52;
+        this.drop = new WeightedDrop().add(consumables.RAUNENECT, 7).addMany(1, consumables.MARAFRU, 
+                        consumables.HEALHERB, 
+                        consumables.HEALHERB, 
+                        consumables.HEALHERB, 
+                        consumables.MOONGRASS, 
+                        consumables.SNAKEBANE, 
+                        consumables.IRONWEED, 
+                        consumables.BLADEFERN
+            );
+        this.imageName = "alraune";
+        this.createVagina(false, VaginaClass.WETNESS_SLAVERING, VaginaClass.LOOSENESS_GAPING);
+        createBreastRow(Appearance.breastCupInverse("DD"));
+        this.ass.analLooseness = AssClass.LOOSENESS_STRETCHED;
+        this.ass.analWetness = AssClass.WETNESS_NORMAL;
+        this.tallness = rand(14) + 59;
+        this.hips.type = Hips.RATING_CURVY + 3;
+        this.butt.type = Butt.RATING_EXPANSIVE;
+        this.lowerBody = LowerBody.PLANT_FLOWER;
+        this.hairLength = 6;
+        this.weaponName = "fist";
+        this.weaponVerb = "punch";
+        this.weaponAttack = 1;
+        this.armorName = "skin";
+        this.lust = 20 + rand(40);
+        this.lustVuln = 0.2;
+        this.gems = rand(20) + 5;
+        this.createPerk(PerkLib.FireVulnerability, 0, 0, 0, 0);
+        this.createPerk(PerkLib.EnemyPlantType, 0, 0, 0, 0);
+        this.createStatusEffect(StatusEffects.AlrauneRunDisabled, 0, 0, 0, 0);
+        createStatusEffect(StatusEffects.Level, 6, 0, 0, 0);
+        checkMonster();
+    }
+}
+
+

@@ -1,0 +1,150 @@
+package classes.scenes.monsters;
+
+import classes.*;
+import classes.bodyParts.Butt;
+import classes.bodyParts.Hips;
+import classes.scenes.SceneLib;
+import classes.internals.*;
+
+class GoblinWarrior extends Goblin
+{
+    public function slash() : Void
+    {
+        outputText("The goblin charges at you with her sword!  As soon as she approaches you, she swings her sword! ");
+        if (player.getEvasionRoll())
+        {
+            outputText("You avoid her slash!");
+        }
+        else
+        {
+            outputText("You fail to dodge and you get hit. ");
+            //Get hit
+            var damage : Int = as3hx.Compat.parseInt(str + weaponAttack + rand(40));
+            player.takePhysDamage(damage, true);
+        }
+    }
+    
+    public function shieldBash() : Void
+    {
+        outputText("The goblin charges at you with her shield! ");
+        if (player.getEvasionRoll())
+        {
+            outputText("You avoid her shield bash!");
+        }
+        else
+        {
+            outputText("Her shield hits you! ");
+            //Get hit
+            if (rand(100) < 40 && !player.hasPerk(PerkLib.Resolute))
+            {
+                outputText("The impact from the shield has left you with a concussion. <b>You are stunned.</b> ");
+                player.createStatusEffect(StatusEffects.Stunned, 1, 0, 0, 0);
+            }
+            var damage : Int = as3hx.Compat.parseInt(str + rand(10));
+            player.takePhysDamage(damage, true);
+        }
+    }
+    
+    public function warriorSpecial() : Void
+    {
+        if (rand(2) == 0)
+        {
+            slash();
+        }
+        else
+        {
+            shieldBash();
+        }
+    }
+    
+    override public function defeated(hpVictory : Bool) : Void
+    {
+        SceneLib.goblinScene.gobboRapeIntro();
+    }
+    override public function won(hpVictory : Bool, pcCameWorms : Bool) : Void
+    {
+        SceneLib.goblinScene.gobboSpecialBeatYaUp();
+    }
+    
+    public function new()
+    {
+        super();
+        this.a = "the ";
+        this.short = "goblin warrior";
+        this.imageName = "goblinwarrior";
+        this.long = "The goblin before you is slightly taller than most of the goblins and her hair is a deep red hue. She has dark green skin and her ears are pierced in several spots. Unlike most goblins you've seen, this one is well armed. She's wearing a metal breastplate that covers her torso, offering her more defense. There are more straps covering her legs than a goblin typically has. She's wielding a shortsword in her right hand and a wooden shield in her left hand. Despite how well-armed she is, her nipples and cooter are exposed.";
+        if (player.hasCock())
+        {
+            this.long += "  She's clearly intent on beating you up just so she can forcibly make you impregnate her.";
+        }
+        this.createVagina(false, VaginaClass.WETNESS_DROOLING, VaginaClass.LOOSENESS_NORMAL);
+        this.createStatusEffect(StatusEffects.BonusVCapacity, 40, 0, 0, 0);
+        createBreastRow(Appearance.breastCupInverse("E"));
+        this.ass.analLooseness = AssClass.LOOSENESS_TIGHT;
+        this.ass.analWetness = AssClass.WETNESS_DRY;
+        this.createStatusEffect(StatusEffects.BonusACapacity, 30, 0, 0, 0);
+        this.tallness = 44 + rand(7);
+        this.hips.type = Hips.RATING_AMPLE + 2;
+        this.butt.type = Butt.RATING_LARGE;
+        this.bodyColor = "dark green";
+        this.hairColor = "red";
+        this.hairLength = 4;
+        initStrTouSpeInte(75, 60, 70, 72);
+        initWisLibSensCor(70, 45, 45, 20);
+        this.weaponName = "sword and shield";
+        this.weaponVerb = "slash";
+        this.weaponAttack = 14;
+        this.armorName = "platemail";
+        this.armorDef = 12;
+        this.armorMDef = 1;
+        this.bonusHP = 400;
+        this.bonusLust = 106;
+        this.lust = 50;
+        this.lustVuln = 0.44;
+        this.level = 16;
+        this.gems = rand(15) + 15;
+        this.drop = new WeightedDrop().add(consumables.GOB_ALE, 5).add(consumables.PONAILS, 2).add(jewelries.POWRRNG, 1).addMany(1, consumables.L_DRAFT, 
+                        consumables.PINKDYE, 
+                        consumables.BLUEDYE, 
+                        consumables.ORANGDY, 
+                        consumables.GREEN_D, 
+                        consumables.PURPDYE, 
+                        consumables.HEALHERB, 
+                        consumables.MOONGRASS, 
+                        consumables.SNAKEBANE, 
+                        consumables.IRONWEED, 
+                        consumables.BLADEFERN
+            );
+        this.abilities = [
+                {
+                    call : eAttack,
+                    type : ABILITY_PHYSICAL,
+                    range : RANGE_MELEE,
+                    tags : [TAG_WEAPON],
+                    weight : 2
+                }, 
+                {
+                    call : goblinDrugAttack,
+                    type : ABILITY_TEASE,
+                    range : RANGE_RANGED,
+                    tags : [TAG_FLUID]
+                }, 
+                {
+                    call : goblinTeaseAttack,
+                    type : ABILITY_TEASE,
+                    range : RANGE_RANGED,
+                    tags : []
+                }, 
+                {
+                    call : warriorSpecial,
+                    type : ABILITY_PHYSICAL,
+                    range : RANGE_MELEE,
+                    tags : [TAG_WEAPON]
+                }
+        ];
+        this.createPerk(PerkLib.ShieldWielder, 0, 0, 0, 0);
+        checkMonster();
+    }
+}
+
+

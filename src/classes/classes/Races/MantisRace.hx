@@ -1,0 +1,62 @@
+package classes.races;
+
+import classes.BodyData;
+import classes.bodyParts.*;
+import classes.iMutations.IMutationsLib;
+import classes.PerkLib;
+import classes.Race;
+
+class MantisRace extends Race
+{
+    public static var MantisChitinColors : Array<Dynamic> = ["green", "emerald", "turquoise"];
+    public static var RaceBody : Array<Dynamic> = [
+        /*Antenna*/"Human", 
+        /*Arms*/"Human", 
+        /*Balls*/"Human", 
+        /*Breasts*/"Human", 
+        /*Nips*/"Human", 
+        /*Ears*/"Human", 
+        /*Eyes*/"Human", 
+        /*Face*/"Human", 
+        /*Gills*/"Human", 
+        /*Hair*/"Human", 
+        /*Horns*/"Human", 
+        /*LowerBody*/"Human", 
+        /*RearBody*/"Human", 
+        /*Skin*/"Human", 
+        /*Ovipositor*/"Human", 
+        /*Oviposition*/"Human", 
+        /*GlowingAss*/"Human", 
+        /*Tail*/"Human", 
+        /*Tongue*/"Human", 
+        /*Wings*/"Human", 
+        /*Penis*/"Human", 
+        /*Vagina*/"Human", 
+        /*Perks*/"Human"
+    ];
+    
+    public function new(id : Int)
+    {
+        super("Mantis", id, []);
+    }
+    
+    override public function setup() : Void
+    {
+        addScores().skinCoatType(Skin.CHITIN, +3).chitinColor1(cast((MantisChitinColors), ANY), +1).antennaeType(Antennae.MANTIS, +1).faceType(Face.HUMAN, +1).earType(Ears.INSECT, +1).armType(Arms.MANTIS, +1).legType(LowerBody.MANTIS, +1).tailType(Tail.MANTIS_ABDOMEN, +1).wingType(Wings.MANTIS_SMALL, +1).wingType(Wings.MANTIS_LARGE, +2).wingType(Wings.MANTIS_LARGE_2, +4).hasPerk(PerkLib.MantisOvipositor, +1);
+        
+        //Thunder Mantis score
+        //4 eyes - adj spider 4 eyes desc
+        //var. of arms, legs, wings, tail, ears
+        
+        addMutation(IMutationsLib.MantislikeAgilityIM);
+        addMutation(IMutationsLib.TrachealSystemIM);
+        
+        buildTier(12, "mantis-morph").namesTauric("mantis-morph", "mantis-taur").buffs({
+                            str.mult : -0.40,
+                            tou.mult : +0.60,
+                            spe.mult : +1.40,
+                            int.mult : +0.20
+                        }).end();
+    }
+}
+

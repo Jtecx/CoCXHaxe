@@ -1,0 +1,173 @@
+package classes.scenes.nPCs;
+
+import classes.*;
+import classes.bodyParts.Butt;
+import classes.bodyParts.Hips;
+import classes.globalFlags.KFLAGS;
+import classes.scenes.SceneLib;
+import classes.internals.WeightedDrop;
+
+class Jojo extends Monster
+{
+    
+    override public function defeated(hpVictory : Bool) : Void
+    {
+        SceneLib.jojoScene.defeatedJojo(hpVictory);
+    }
+    
+    override public function won(hpVictory : Bool, pcCameWorms : Bool) : Void
+    {
+        SceneLib.jojoScene.loseToJojo();
+    }
+    
+    override private function performCombatAction() : Void
+    {
+        if (JojoScene.monk > 1 && rand(2) == 0)
+        {
+            selfCorruption();
+        }
+        //Shouldn't do any self corruption at monk one. Otherwise a 50/50 chance
+        else
+        {
+            eAttack();
+        }
+    }
+    
+    private function selfCorruption() : Void
+    {
+        var _sw20_ = (JojoScene.monk);        
+
+        switch (_sw20_)
+        {
+            case 2:
+                outputText("Jojo looks lost in thought for a moment, and fails to attack.  ");
+                lust += Math.round(maxLust() * 0.04);
+            case 3:
+                outputText("Jojo blushes as he fights you, distracted by a stray thought.  You think you see a bulge in the loose cloth of his pants.  ");
+                lust += Math.round(maxLust() * 0.08);
+            case 4:
+                outputText("Jojo stumbles, shakes his head, and pulls one of his hands away from the stiff tent in his pants.  ");
+                lust += Math.round(maxLust() * 0.1);
+            default:
+                outputText("Jojo frantically jerks his " + cockDescriptShort(0) + ", stroking the " + cockDescriptShort(0) + " as it leaks pre-cum at the sight of you.  ");
+                lust += Math.round(maxLust() * 0.15);
+        }
+        
+        if (lust >= 100)
+        {
+            doNext(SceneLib.combat.endLustVictory);
+            return;
+        }
+        else if (lust >= Math.round(maxLust() * 0.85))
+        {
+            outputText("The mouse is panting and softly whining, each movement seeming to make his bulge more pronounced.  You don't think he can hold out much longer.  ");
+        }
+        else if (lust >= Math.round(maxLust() * 0.7))
+        {
+            outputText("The mouse is having trouble moving due to the rigid protrusion from his groin.  ");
+        }
+        else if (lust >= Math.round(maxLust() * 0.6))
+        {
+            outputText("The mouse's eyes constantly dart over your most sexual parts, betraying his lust.  ");
+        }
+        else if (lust > Math.round(maxLust() * 0.5))
+        {
+            outputText("The mouse's skin remains flushed with the beginnings of arousal.  ");
+        }
+        doNext(EventParser.playerMenu);
+    }
+    
+    public function new()
+    {
+        super();
+        trace("Jojo Constructor!");
+        this.a = "";
+        this.short = "Jojo";
+        this.imageName = "jojo";
+        this.long = "Jojo is an anthropomorphic mouse with immaculate white fur.  Though he stands only four feet tall, he is covered in lean muscle and moves with incredible speed.  He wears loose white clothes wrapped in prayer beads and tattered prayer papers.";
+        // this.plural = false;
+        this.createCock(7.5, 1.8);
+        this.balls = 2;
+        this.ballSize = 1;
+        this.cumMultiplier = 1;
+        this.hoursSinceCum = 1000;
+        createBreastRow(0);
+        this.ass.analLooseness = AssClass.LOOSENESS_TIGHT;
+        this.ass.analWetness = AssClass.WETNESS_NORMAL;
+        this.tallness = 4 * 12;
+        this.hips.type = Hips.RATING_SLENDER;
+        this.butt.type = Butt.RATING_TIGHT;
+        this.skin.growFur({
+                    color : "white"
+                });
+        this.skinDesc = "fur";
+        this.hairColor = "white";
+        this.hairLength = 2;
+        initStrTouSpeInte(123, 139, 194, 160);
+        initWisLibSensCor(160, 35, 100, JojoScene.monk * 15);
+        this.weaponName = "paw";
+        this.weaponVerb = "punch";
+        this.weaponAttack = 25;
+        this.armorName = "robes";
+        this.armorDef = 20;
+        this.armorMDef = 100;
+        this.lust = 15;
+        this.lustVuln = .9;
+        this.level = 24;
+        this.gems = rand(15) + 7;
+        this.special1 = selfCorruption;
+        //Create jojo sex attributes
+        //Variations based on jojo's corruption.
+        if (JojoScene.monk == 3)
+        {
+            this.lust += 70;
+            this.cocks[0].cockThickness += .2;
+            this.cocks[0].cockLength += 1.5;
+            this.bonusLust = 159;
+            if (player.gender == 1 || player.gender == 3)
+            {
+                this.ass.analLooseness = 2;
+            }
+        }
+        if (JojoScene.monk == 4)
+        {
+            this.lust += 85;
+            this.cocks[0].cockThickness += .5;
+            this.cocks[0].cockLength += 3.5;
+            this.bonusLust = 318;
+            if (player.gender == 1 || player.gender == 3)
+            {
+                this.ass.analLooseness = 3;
+            }
+        }
+        if (JojoScene.monk == 5)
+        {
+            this.lust += 100;
+            this.cocks[0].cockThickness += 1;
+            this.cocks[0].cockLength += 5.5;
+            this.strStat.core.value -= 50 + (10 * flags[kFLAGS.NEW_GAME_PLUS_LEVEL]);
+            this.touStat.core.value += 75 + (15 * flags[kFLAGS.NEW_GAME_PLUS_LEVEL]);
+            this.cor += 10;
+            this.HP += 150 + (150 * flags[kFLAGS.NEW_GAME_PLUS_LEVEL]);
+            this.bonusLust = 477;
+            if (player.gender == 1 || player.gender == 3)
+            {
+                this.ass.analLooseness = 4;
+            }
+            this.long = "Jojo is an anthropomorphic mouse with immaculate white fur.  Though he stands only four feet tall, he is covered in lean muscle and moves with incredible speed.  He's naked, with a large tainted throbbing member bouncing at attention.  A fuzzy sack with painfully large looking balls dangles between his legs.";
+        }
+        if (JojoScene.monk > 4)
+        {
+            this.drop = new WeightedDrop(consumables.INCUBID, 2).add(consumables.B__BOOK, 1).add(consumables.SUCMILK, 1);
+        }
+        else
+        {
+            this.drop = NO_DROP;
+        }
+        this.createPerk(PerkLib.EnemyBeastOrAnimalMorphType, 0, 0, 0, 0);
+        this.createPerk(PerkLib.UniqueNPC, 0, 0, 0, 0);
+        checkMonster();
+    }
+}
+
+

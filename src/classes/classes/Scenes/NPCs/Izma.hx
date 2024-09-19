@@ -1,0 +1,206 @@
+package classes.scenes.nPCs;
+
+import classes.*;
+import classes.bodyParts.Butt;
+import classes.bodyParts.Hips;
+import classes.scenes.SceneLib;
+
+/**
+	 * ...
+	 * @author ...
+	 */
+class Izma extends Monster
+{
+    
+    //[Special Attacks]
+    private function IzmaSpecials1() : Void
+    //Determine if dodged!
+    {
+        
+        if (player.getEvasionRoll())
+        {
+            outputText("Izma attempts to get close, but you manage to side-step her before she can lay her gauntleted hands on you.\n");
+            return;
+        }
+        outputText("Izma rushes you with impressive speed, striking a few precise locations on your joints with her fingertips before leaping back.  It doesn't hurt, but you feel tired and sore. \"<i>Pressure points...</i>\" she laughs, seeing your confused expression.");
+        //(Fatigue damage)
+        EngineCore.fatigue(50 + rand(51));
+    }
+    
+    private function IzmaSpecials2() : Void
+    //Determine if dodged!
+    {
+        
+        if (player.getEvasionRoll())
+        {
+            outputText("Izma tries to clinch you, but you use your speed to keep just out of reach.\n");
+            return;
+        }
+        var damage : Float = 0;
+        damage = Math.round(str - player.armorDef);
+        if (damage < 0)
+        {
+            damage = 0;
+        }
+        outputText("Izma ducks and jinks, working to close quarters, and clinches you. Unable to get your weapon into play, you can only ");
+        if (damage == 0)
+        {
+            outputText("laugh as her blades scape uselessly at your armor-clad back");
+        }
+        else
+        {
+            outputText("writhe as she painfully drags the blades of her glove down your back");
+            if (!player.immuneToBleed())
+            {
+                player.createStatusEffect(StatusEffects.IzmaBleed, 3, 0, 0, 0);
+            }
+        }
+        outputText(" before breaking her embrace and leaping away. ");
+        player.takePhysDamage(damage, true);
+    }
+    private function IzmaSpecials3() : Void
+    {
+        outputText("Rather than move to attack you, Izma grins at you and grabs her breasts, massaging them as she caresses her long penis with one knee. Her tail thrashes and thumps the sand heavily behind her as she simulates an orgasm, moaning loudly into the air. The whole display leaves you more aroused than before.");
+        //(lust gain)
+        player.takeLustDamage(50 + player.lib / 2, true);
+    }
+    
+    private function IzmaAI() : Void
+    {
+        var choice : Float = rand(5);
+        if (choice <= 1)
+        {
+            eAttack();
+        }
+        if (choice == 2)
+        {
+            if (player.fatigue >= 80)
+            {
+                choice = 3;
+            }
+            else
+            {
+                IzmaSpecials1();
+            }
+        }
+        if (choice == 3)
+        {
+            if (player.armorDef >= 10 && rand(3) == 0)
+            {
+                IzmaSpecials2();
+            }
+            else
+            {
+                choice = 4;
+            }
+        }
+        if (choice == 4)
+        {
+            IzmaSpecials3();
+        }
+    }
+    
+    override public function eAttack() : Void
+    {
+        outputText("Izma slides up to you, throws a feint, and then launches a rain of jabs at you!\n");
+        super.eAttack();
+    }
+    
+    override private function performCombatAction() : Void
+    {
+        var choice : Float = rand(5);
+        if (choice <= 1)
+        {
+            eAttack();
+        }
+        if (choice == 2)
+        {
+            if (player.fatigue >= 80)
+            {
+                choice = 3;
+            }
+            else
+            {
+                IzmaSpecials1();
+            }
+        }
+        if (choice == 3)
+        {
+            if (rand(3) == 0)
+            {
+                IzmaSpecials2();
+            }
+            else
+            {
+                choice = 4;
+            }
+        }
+        if (choice == 4)
+        {
+            IzmaSpecials3();
+        }
+    }
+    
+    override public function defeated(hpVictory : Bool) : Void
+    {
+        SceneLib.izmaScene.defeatIzma();
+    }
+    
+    override public function won(hpVictory : Bool, pcCameWorms : Bool) : Void
+    {
+        if (pcCameWorms)
+        {
+            outputText("\n\n\"<i>Gross!</i>\" Izma cries as she backs away, leaving you to recover alone.");
+            SceneLib.combat.cleanupAfterCombatImpl();
+        }
+        else
+        {
+            SceneLib.izmaScene.IzmaWins();
+        }
+    }
+    
+    public function new()
+    {
+        super();
+        this.a = "";
+        this.short = "Izma";
+        this.imageName = "izma";
+        this.long = "Izma the tigershark stands a bit over 6' tall, with orange skin bearing horizontal stripes covering most of her body.  Her silver-white hair cascades past her shoulders, draping over an impressive pair of DD-cup breasts barely restrained by a skimpy black bikini top.  Under the knee-length grass skirt below them rustles her beastly fifteen-inch penis and four-balled sack; you catch occasional glimpses of them as she moves.  She's tucked her usual reading glasses into her locker at the moment.";
+        // this.plural = false;
+        this.createCock(15, 2.2);
+        this.balls = 4;
+        this.ballSize = 3;
+        this.createVagina(false, VaginaClass.WETNESS_SLICK, VaginaClass.LOOSENESS_LOOSE);
+        this.createStatusEffect(StatusEffects.BonusVCapacity, 45, 0, 0, 0);
+        createBreastRow(Appearance.breastCupInverse("DD"));
+        this.ass.analLooseness = AssClass.LOOSENESS_NORMAL;
+        this.ass.analWetness = AssClass.WETNESS_DRY;
+        this.createStatusEffect(StatusEffects.BonusACapacity, 30, 0, 0, 0);
+        this.tallness = 5 * 12 + 5;
+        this.hips.type = Hips.RATING_CURVY;
+        this.butt.type = Butt.RATING_NOTICEABLE;
+        this.bodyColor = "striped orange";
+        this.hairColor = "silver";
+        this.hairLength = 20;
+        initStrTouSpeInte(200, 220, 212, 148);
+        initWisLibSensCor(148, 150, 50, 40);
+        this.weaponName = "clawed gauntlets";
+        this.weaponVerb = "clawed punches";
+        this.weaponAttack = 45;
+        this.armorName = "bikini and grass skirt";
+        this.armorDef = 60;
+        this.armorMDef = 5;
+        this.bonusHP = 660;
+        this.bonusLust = 225;
+        this.lust = 20;
+        this.lustVuln = .20;
+        this.level = 25;
+        this.gems = rand(15) + 10;
+        this.drop = NO_DROP;
+        this.createPerk(PerkLib.EnemyBeastOrAnimalMorphType, 0, 0, 0, 0);
+        this.createPerk(PerkLib.UniqueNPC, 0, 0, 0, 0);
+        checkMonster();
+    }
+}
+
+

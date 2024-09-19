@@ -1,0 +1,160 @@
+/**
+ * ...
+ * @author Liadri
+ */
+package classes.scenes.areas.glacialRift;
+
+import classes.*;
+import classes.bodyParts.Butt;
+import classes.bodyParts.Hips;
+import classes.bodyParts.Wings;
+import classes.scenes.SceneLib;
+import classes.internals.WeightedDrop;
+
+class YukiOnna extends Monster
+{
+    public function IcyKiss() : Void
+    {
+        outputText("Suddenly the Yuki Onna flies down and forcefully pulls you into a kiss. At first you’re confused but you quickly shove her away in panic as you begin freezing from the inside. She giggles as she takes back to the air, leaving you aroused and colder at the same time. Your lungs feel like they’re freezing, only accelerating your demise! ");
+        player.createStatusEffect(StatusEffects.FrozenLung, SceneLib.combat.debuffsOrDoTDuration(2), 0.03, 0, 0);
+        var kissdmg : Float = this.inte + this.wis + this.lib;
+        player.takeIceDamage(kissdmg, true);
+        var kisslust : Float = (inte / 5) + rand(10);
+        kisslust = Math.round(kisslust);
+        player.takeLustDamage(kisslust, true);
+    }
+    
+    public function IceArmor() : Void
+    {
+        outputText("With the Yuki Onna’s ice armor gone, she encases herself in a new layer taunting you to try and hit her.");
+        createStatusEffect(StatusEffects.AbilityCooldown1, 8, 0, 0, 0);
+        createStatusEffect(StatusEffects.IceArmor, 5, 0, 0, 0);
+    }
+    
+    public function ConeOfCold() : Void
+    {
+        outputText("The Yuki onna inhales then breathes a cone of ice magic out. The howling blast freezes you solid, encasing you in a thick layer of ice! ");
+        var conedmg : Float = (this.str + this.spe + this.tou) * 5;
+        player.takeIceDamage(conedmg, true);
+        player.createStatusEffect(StatusEffects.Stunned, 2, 0, 0, 0);
+    }
+    
+    public function IcySpear() : Void
+    {
+        outputText("The Yuki Onna runs you through with her icy spear. The tip isn't as deadly as a metal weapon but the cold pierces you outright, leaving you with frostburns. ");
+        var damage : Float = 0;
+        damage += eBaseDamage();
+        player.takePhysDamage(damage, true);
+        var frostburnPlayer : Float = (this.str + this.spe + this.tou) * 2;
+        player.takeIceDamage(frostburnPlayer, true);
+        if (!player.immuneToFrostBurn())
+        {
+            if (player.hasStatusEffect(StatusEffects.FrostburnDoT))
+            {
+                player.addStatusValue(StatusEffects.FrostburnDoT, 1, 1);
+                player.addStatusValue(StatusEffects.FrostburnDoT, 3, 1);
+            }
+            else
+            {
+                player.createStatusEffect(StatusEffects.FrostburnDoT, SceneLib.combat.debuffsOrDoTDuration(4), 0.02, 0, 0);
+            }
+        }
+    }
+    
+    override private function performCombatAction() : Void
+    {
+        if (!hasStatusEffect(StatusEffects.AbilityCooldown1) && !monsterIsStunned())
+        {
+            IceArmor();
+        }
+        else
+        {
+            var choice : Float = rand(4);
+            if (choice < 2)
+            {
+                IcySpear();
+            }
+            if (choice == 2)
+            {
+                if (player.hasStatusEffect(StatusEffects.Stunned))
+                {
+                    IcyKiss();
+                }
+                else
+                {
+                    ConeOfCold();
+                }
+            }
+            if (choice == 3)
+            {
+                if (player.hasStatusEffect(StatusEffects.FrozenLung))
+                {
+                    IcySpear();
+                }
+                else
+                {
+                    IcyKiss();
+                }
+            }
+        }
+    }
+    
+    override public function defeated(hpVictory : Bool) : Void
+    {
+        SceneLib.glacialRift.yukionnaScene.winAgainstYukiOnna();
+    }
+    
+    override public function won(hpVictory : Bool, pcCameWorms : Bool) : Void
+    {
+        SceneLib.glacialRift.yukionnaScene.loseToYukiOnna();
+    }
+    
+    public function new()
+    {
+        super();
+        this.a = "a ";
+        this.short = "Yuki Onna";
+        this.imageName = "yuki-onna";
+        this.long = "You are fighting a Yuki Onna, a spiteful ice spirit who steals away the warmth of others. She look just like a human if not for her deathly pale skin, bluish lips and cold bluish nails. She flies in the air, dancing from side to side like falling snow, an icy spear in her hand ready to impale you at the first opportunity. The blizzard mirrors her anger, plummeting your body and blinding you somewhat. Defeating her with all these conditions is going to be a challenge.";
+        // this.plural = false;
+        this.createVagina(false, 1, 1);
+        createBreastRow(Appearance.breastCupInverse("D"));
+        this.ass.analLooseness = AssClass.LOOSENESS_TIGHT;
+        this.ass.analWetness = AssClass.WETNESS_NORMAL;
+        this.tallness = 56;
+        this.hips.type = Hips.RATING_SLENDER;
+        this.butt.type = Butt.RATING_TIGHT;
+        this.skin.setBaseOnly({
+                    color : "pale blue"
+                });
+        this.hairColor = "silver white";
+        this.hairLength = 25;
+        initStrTouSpeInte(135, 24, 240, 319);
+        initWisLibSensCor(265, 240, 115, -70);
+        this.weaponName = "Icy spear";
+        this.weaponVerb = "pummel";
+        this.weaponAttack = 54;
+        this.armorName = "Snowy Kimono";
+        this.armorDef = 10;
+        this.armorMDef = 10;
+        this.bonusHP = 1500;
+        this.bonusLust = 426;
+        this.lust = 25 + rand(15);
+        this.lustVuln = 0.36;
+        this.level = 71;
+        this.gems = 115 + rand(20);
+        this.drop = new WeightedDrop().add(armors.BLIZZ_K, 1).add(weapons.BCLAWS, 1).add(headjewelries.SNOWFH, 1).add(consumables.QWHITED, 1).add(consumables.SNOWW_D, 5).add(consumables.WHITEIS, 5);
+        this.wings.type = Wings.LEVITATION;
+        //this.createStatusEffect(StatusEffects.GenericRunDisabled, 0, 0, 0, 0);
+        this.createStatusEffect(StatusEffects.AbilityCooldown1, 8, 0, 0, 0);
+        this.createStatusEffect(StatusEffects.IceArmor, 5, 0, 0, 0);
+        this.createStatusEffect(StatusEffects.Flying, 50, 0, 0, 0);
+        this.createPerk(PerkLib.RefinedBodyI, 0, 0, 0, 0);
+        this.createPerk(PerkLib.IceNature, 0, 0, 0, 0);
+        this.createPerk(PerkLib.IcyFlesh, 0, 0, 0, 0);
+        this.createPerk(PerkLib.TankI, 0, 0, 0, 0);
+        checkMonster();
+    }
+}
+
+

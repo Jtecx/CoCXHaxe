@@ -1,0 +1,126 @@
+/**
+ * ...
+ * @author ...
+ */
+package classes.scenes.areas.mountain;
+
+import classes.*;
+import classes.bodyParts.Butt;
+import classes.bodyParts.Face;
+import classes.bodyParts.Hips;
+import classes.bodyParts.Horns;
+import classes.bodyParts.Tail;
+import classes.scenes.SceneLib;
+import classes.internals.*;
+
+class LactaBovina extends Monster
+{
+    public function lactaBovinaBoobSlam() : Void
+    {
+        outputText("The cow girl runs towards you and rams her massive chest into your face. While its pillow-like nature prevents you from taking damage from this unconventional attack it leaves you more than slightly aroused. ");
+        player.takeLustDamage(Math.round(player.lib + rand(player.lib) * 0.6), true);
+    }
+    public function lactaBovinaHoofs() : Void
+    {
+        outputText("The cow girl kicks you with her hoof. Her curvy form turns out to be deceptively muscular as the blow sends you flying back a few feet");
+        if ((player.hasPerk(PerkLib.Resolute) && rand(20) == 0) || (!player.hasPerk(PerkLib.Resolute) && rand(4) == 0))
+        {
+            outputText(", leaving you stunned");
+            player.createStatusEffect(StatusEffects.Stunned, 1, 0, 0, 0);
+        }
+        outputText(". ");
+        var dmg1 : Float = eBaseStrengthDamage() * 0.4;
+        player.takePhysDamage(dmg1, true);
+    }
+    public function lactaBovinaSwingThoseMilkJugs() : Void
+    {
+        outputText("The cow girl giggles and swings her massive udders from one side to another trying to catch your attention. It'd be hard not to pay attention to this spectacle. ");
+        player.takeLustDamage(Math.round(player.lib + rand(player.lib) * 0.2), true);
+    }
+    public function lactaBovinaMilkBlast() : Void
+    {
+        outputText("The cow girl grabs her breast with both hand and press causing her nubs to shoot a pair of massive streams of milk straight at you! ");
+        var dmg2 : Float = player.lib + rand(player.lib) + this.lib + this.sens;
+        player.takeLustDamage(dmg2, true);
+        player.takePhysDamage(dmg2 * 2, true);
+        player.createStatusEffect(StatusEffects.Stunned, 1, 0, 0, 0);
+    }
+    
+    override private function performCombatAction() : Void
+    {
+        var choice : Float = rand(3);
+        if (choice == 0)
+        {
+            lactaBovinaMilkBlast();
+        }
+        if (choice == 1)
+        {
+            if (rand(2) == 0 && !player.hasStatusEffect(StatusEffects.Stunned))
+            {
+                lactaBovinaHoofs();
+            }
+            else
+            {
+                lactaBovinaBoobSlam();
+            }
+        }
+        if (choice == 2)
+        {
+            lactaBovinaSwingThoseMilkJugs();
+        }
+    }
+    
+    override public function defeated(hpVictory : Bool) : Void
+    {
+        SceneLib.mountain.lactabovinaScene.lactaBovinaVictoryRapeChoices();
+    }
+    
+    override public function won(hpVictory : Bool, pcCameWorms : Bool) : Void
+    {
+        SceneLib.mountain.lactabovinaScene.lactaBovinaRape();
+    }
+    
+    public function new()
+    {
+        super();
+        var furColor : String = randomChoice("black", "brown");
+        this.a = "the ";
+        this.short = "lacta bovine";
+        this.imageName = "lactabovine";
+        this.long = "You are fighting a Cow girl. Poor thing hasn't been milked in forever and is determined to force your mouth on her nipple or else! Her jugs are easily HH! She doesn't wield a weapon or clothes, not that any normal bra could ever contain her massive cleavage.";
+        // this.plural = false;
+        this.createVagina(false, VaginaClass.WETNESS_SLICK, VaginaClass.LOOSENESS_LOOSE);
+        this.createStatusEffect(StatusEffects.BonusVCapacity, 100, 0, 0, 0);
+        createBreastRow(Appearance.breastCupInverse("HH"));
+        this.ass.analLooseness = AssClass.LOOSENESS_LOOSE;
+        this.ass.analWetness = AssClass.WETNESS_MOIST;
+        this.tallness = rand(27) + 69;
+        this.hips.type = Hips.RATING_CURVY;
+        this.butt.type = Butt.RATING_LARGE + 1;
+        this.bodyColor = "light";
+        this.hairColor = furColor;
+        this.hairLength = 13;
+        this.horns.type = Horns.COW_MINOTAUR;
+        this.horns.count = 2;
+        initStrTouSpeInte(115, 140, 90, 100);
+        initWisLibSensCor(100, 250, 220, -20);
+        this.weaponName = "fists";
+        this.weaponVerb = "punch";
+        this.weaponAttack = 39;
+        this.armorName = "skin";
+        this.armorDef = 60;
+        this.armorMDef = 30;
+        this.bonusHP = 200;
+        this.bonusLust = 496;
+        this.lust = 40;
+        this.lustVuln = .9;
+        this.gems = rand(15) + 15;
+        this.level = 26;
+        this.tailType = Tail.COW;
+        this.drop = new WeightedDrop().add(necklaces.COWBELL, 12).add(undergarments.COW_BRA, 10).add(undergarments.COW_PANTY, 8).add(consumables.PROBOVA, 4).add(consumables.LABOVA_, 7);
+        this.createPerk(PerkLib.EnemyBeastOrAnimalMorphType, 0, 0, 0, 0);
+        checkMonster();
+    }
+}
+
+

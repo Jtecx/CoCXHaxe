@@ -1,0 +1,76 @@
+/**
+ * ...
+ * @author Ormael
+ */
+package classes.scenes.camp;
+
+import classes.*;
+import classes.internals.*;
+import classes.globalFlags.KFLAGS;
+
+class FclassHeavenTribulation extends GclassHeavenTribulation
+{
+    override private function performCombatAction() : Void
+    {
+        if (!player.hasStatusEffect(StatusEffects.HeavenTribulationCR))
+        {
+            player.createStatusEffect(StatusEffects.HeavenTribulationCR, 1, 1, 1, 0);
+        }
+        else
+        {
+            player.addStatusValue(StatusEffects.HeavenTribulationCR, 1, 1);
+        }
+        if (player.statusEffectv1(StatusEffects.HeavenTribulationCR) >= 6)
+        {
+            HP = 0;
+        }
+        else if (player.statusEffectv1(StatusEffects.HeavenTribulationCR) >= 4)
+        {
+            tribulationLustfullThunderStrike();
+        }
+        else
+        {
+            tribulationThunderStrike();
+        }
+    }
+    
+    override public function won(hpVictory : Bool, pcCameWorms : Bool) : Void
+    {
+        campscene.HeavenTribulationThunderDoom();
+    }
+    
+    override public function defeated(hpVictory : Bool) : Void
+    {
+        if (player.statusEffectv1(StatusEffects.HeavenTribulationCR) >= 6)
+        {
+            campscene.FclassHTsurvived();
+        }
+        else
+        {
+            campscene.FclassHTbeaten();
+        }
+    }
+    
+    public function new()
+    {
+        super();
+        this.a = "the ";
+        this.short = "F class Heaven Tribulation";
+        this.imageName = "F class Heaven Tribulation";
+        this.long = "You're currently facing the F class Heavenly Tribulation: A gathering of jet black clouds that sends down a wrathful storm to test any soul cultivator dreaming to break to Soul Overlord stage.";
+        this.plural = false;
+        initStrTouSpeInte(10, 450, 10, 10);
+        initWisLibSensCor(10, 10, 10, 0);
+        this.lustVuln = 0.01;
+        this.tallness = 144;
+        this.createBreastRow(0, 1);
+        initGenderless();
+        this.drop = NO_DROP;
+        this.level = 78;
+        this.bonusHP = 9000;
+        this.bonusLust = 98;
+        this.createStatusEffect(StatusEffects.Flying, 14, 0, 0, 0);
+        this.createStatusEffect(StatusEffects.GenericRunDisabled, 0, 0, 0, 0);
+        checkMonster();
+    }
+}

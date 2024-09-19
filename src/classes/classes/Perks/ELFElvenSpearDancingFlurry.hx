@@ -1,0 +1,51 @@
+/**
+ * Created by aimozg on 27.01.14.
+ */
+package classes.perks;
+
+import classes.PerkClass;
+import classes.PerkType;
+import classes.PerkLib;
+
+class ELFElvenSpearDancingFlurry extends PerkType
+{
+    
+    override public function desc(params : PerkClass = null) : String
+    {
+        if (!player || params == null)
+        {
+            return _desc;
+        }
+        return "As an elf add " + params.value1 + " extra attacks when full attacking using a one handed or two handed spear with no shield equipped. Increases spear damage by " + params.value1 * 20 + "% when full attacking.";
+    }
+    
+    override public function name(params : PerkClass = null) : String
+    {
+        if (!player || params == null)
+        {
+            return _name;
+        }
+        var pPerkCompare : Int = player.perkv1(PerkLib.ELFElvenSpearDancingFlurry1to4);
+        if (pPerkCompare >= 0)
+        {
+            return "Elven Spear Dancing Flurry " + pPerkCompare + "";
+        }
+        else
+        {
+            return "Elven Spear Dancing Flurry";
+        }
+    }
+    
+    public function new()
+    {
+        super("Elven Spear Dancing Flurry", "Elven Spear Dancing Flurry", 
+                "NOT RELEVANT TEXT"
+        );
+    }
+    
+    override public function keepOnAscension(respec : Bool = false) : Bool
+    {
+        return true;
+    }
+}
+

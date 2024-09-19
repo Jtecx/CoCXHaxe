@@ -1,0 +1,97 @@
+/**
+ * ...
+ * @author Ormael
+ */
+package classes.items.armors;
+
+import classes.globalFlags.KFLAGS;
+import classes.ItemType;
+import classes.items.Armor;
+import classes.Player;
+import classes.EngineCore;
+
+class HBArmor extends Armor
+{
+    
+    public function new()
+    {
+        super();  //160 * armor + mres  
+        super("HBArmor", "HBArmor", "HB armor", "a HB armor", 100, 80, 28800, "This white suit of armor is more than just platemail - it was reverse engineered from almost intact armor of elf-like offworlder. It protective properties would increase as long user is capable to feed it on regular basis with soulforce. (Req. to be 7+ feet tall)", "Light Ayo");
+    }
+    
+    override private function get_def() : Float
+    {
+        if (game.flags[kFLAGS.SOULFORCE_STORED_IN_AYO_ARMOR] > 0)
+        {
+            return 100;
+        }
+        else
+        {
+            return 60;
+        }
+    }
+    
+    override private function get_mdef() : Float
+    {
+        if (game.flags[kFLAGS.SOULFORCE_STORED_IN_AYO_ARMOR] > 0)
+        {
+            return 80;
+        }
+        else
+        {
+            return 48;
+        }
+    }
+    
+    override public function afterEquip(doOutput : Bool, slot : Int) : Void
+    {
+        if (!game.isLoadingSave)
+        {
+            var oldHPratio : Float = game.player.hp100 / 100;
+            game.flags[kFLAGS.SOULFORCE_STORED_IN_AYO_ARMOR] = 0;
+            game.player.buff("Ayo Armor").remove();
+            game.player.buff("Ayo Armor").addStats({
+                        str.mult : -0.18,
+                        spe.mult : -0.60
+                    });
+            game.player.HP = oldHPratio * game.player.maxHP();
+            EngineCore.statScreenRefresh();
+        }
+        super.afterEquip(doOutput, slot);
+    }
+    
+    override public function afterUnequip(doOutput : Bool, slot : Int) : Void
+    {
+        if (game.flags[kFLAGS.SOULFORCE_STORED_IN_AYO_ARMOR] > 0)
+        {
+            game.player.soulforce += game.flags[kFLAGS.SOULFORCE_STORED_IN_AYO_ARMOR];
+            if (game.player.soulforce > game.player.maxOverSoulforce())
+            {
+                game.player.soulforce = game.player.maxOverSoulforce();
+            }
+            game.flags[kFLAGS.SOULFORCE_STORED_IN_AYO_ARMOR] = 0;
+        }
+        super.afterUnequip(doOutput, slot);
+    }
+    
+    override public function canEquip(doOutput : Bool, slot : Int) : Bool
+    {
+        if (game.player.str >= 60 && game.player.spe >= 60 && game.player.tallness >= 84)
+        {
+            return super.canEquip(doOutput, slot);
+        }
+        if (doOutput)
+        {
+            if (game.player.tallness < 84)
+            {
+                outputText("You aren't tall enough to wear this armor!  ");
+            }
+            else
+            {
+                outputText("You aren't strong and agile enough to wear this armor!  Unless you likes to move slower than snail and hit weaked than wet noddle!  ");
+            }
+        }
+        return false;
+    }
+}
+

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<meta title="CoCXHaxe" package="com.sample.cocxhaxe" version="1.0.0" company="Company Name" />
+	<app main="Startup" path="Export" file="CoCXHaxe" />
+	
+	<source path="src" />
+	
+	<haxelib name="openfl" />
+	<haxelib name="starling" />
+	
+	<assets path="assets" />
+	
+</project>

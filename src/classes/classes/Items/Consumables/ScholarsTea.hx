@@ -1,0 +1,42 @@
+package classes.items.consumables;
+
+import classes.items.Consumable;
+
+/**
+	 * Item that increases INT
+	 */
+class ScholarsTea extends Consumable
+{
+    private static inline var ITEM_VALUE : Int = 15;
+    
+    public function new()
+    {
+        super("Smart T", "Scholars T.", "a cup of scholar's tea", ITEM_VALUE, "This powerful brew supposedly has mind-strengthening effects.");
+    }
+    
+    override public function useItem() : Bool
+    {
+        player.slimeFeed();
+        clearOutput();
+        outputText("Following the merchant's instructions, you steep and drink the tea. Its sharp taste fires up your palate and in moments, you find yourself more alert and insightful. As your mind wanders, a creative, if somewhat sordid, story comes to mind. It is a shame that you do not have writing implements as you feel you could make a gem or two off what you have conceived. The strange seller was not lying about the power of the tea.");
+        if (rand(3) == 0)
+        {
+            outputText(player.modTone(15, 1));
+        }
+        if (player.inte < 50)
+        {
+            player.alchemyBonus("int", 1 + rand(4));
+        }
+        else if (player.inte < 100)
+        {
+            player.alchemyBonus("int", 1 + rand(3));
+        }
+        else
+        {
+            player.alchemyBonus("int", 1 + rand(3));
+        }
+        player.refillHunger(10);
+        
+        return false;
+    }
+}

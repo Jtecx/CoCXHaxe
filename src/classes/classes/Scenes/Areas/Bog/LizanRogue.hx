@@ -1,0 +1,156 @@
+package classes.scenes.areas.bog;
+
+import classes.*;
+import classes.bodyParts.Butt;
+import classes.bodyParts.Hips;
+import classes.bodyParts.Skin;
+import classes.iMutations.*;
+import classes.scenes.SceneLib;
+import classes.statusEffects.combat.LizanBlowpipeDebuff;
+import classes.internals.*;
+import classes.scenes.combat.CombatAbilities;
+
+class LizanRogue extends Monster
+{
+    //1 - str
+    //2 - tou
+    //3 - spe
+    //4 - sens
+    public function blowGun() : Void
+    {
+        if (CombatAbilities.EAspectAir.isActive())
+        {
+            outputText("The lizan flings himself back.  In the air he puts a blowgun to his lips.  Then that tiny dart is stopeed by the wind wall that still surrounds you.");
+            CombatAbilities.EAspectAir.advance(true);
+        }
+        else if (player.getEvasionRoll())
+        {
+            outputText("The lizan flings himself back.  In the air he puts a blowgun to his lips.  You move just in time to avoid the tiny dart.");
+        }
+        else
+        {
+            outputText("The lizan flings himself back.  In the air he puts his blowgun to his lips and fires a single dart into your neck.  As you pull it out your limbs begin to feel like wet noodles, it appears you’ve been poisoned.");
+            (try cast(player.createOrFindStatusEffect(StatusEffects.LizanBlowpipe), LizanBlowpipeDebuff) catch(e:Dynamic) null).debuffStrSpe();
+        }
+    }
+    
+    public function immaHurtYouBadly() : Void
+    {
+        if (player.getEvasionRoll())
+        {
+            outputText("The lizan Rushes at you.  As you raise your [weapon] to defend yourself he dives to the side, using a blowgun to fire a single dart at you.  You somehow manage to dodge it.");
+        }
+        else
+        {
+            outputText("The lizan rushes at you.  As you raise your [weapon] to defend yourself he dives to the side, using his blowgun to fire a single stinging dart into your neck.  You pull out the dart and your skin begins to feel hypersensitive, you’re going to have trouble defending yourself");
+            (try cast(player.createOrFindStatusEffect(StatusEffects.LizanBlowpipe), LizanBlowpipeDebuff) catch(e:Dynamic) null).debuffTouSens();
+        }
+    }
+    
+    public function wingstickThrow() : Void
+    {
+        if (player.getEvasionRoll())
+        {
+            outputText("The lizan zips to the side and you hear the whistle of something being thrown. You sidestep just in time to see a wingstick fly past.");
+        }
+        else
+        {
+            outputText("The lizan zips to the side and as you move to follow you feel something sharp cut across your body. He must have thrown something. ");
+            var damage : Int = as3hx.Compat.parseInt(this.spe + rand(10));
+            player.takePhysDamage(damage, true);
+        }
+    }
+    
+    public function tongueAttack() : Void
+    {
+        if (player.getEvasionRoll())
+        {
+            outputText("All you see is a flash of pink and without even thinking you twist out of its way and watch the lizan’s long tongue snap back into his mouth.");
+        }
+        else
+        {
+            outputText("All you see is a flash of pink as the lizan’s long tongue hits your eyes. Some kind of chemical reaction causes your eyes to burn, you’ve been blinded!");
+            if (!player.hasStatusEffect(StatusEffects.Blind) && !player.isImmuneToBlind())
+            {
+                player.createStatusEffect(StatusEffects.Blind, 2 + rand(2), 0, 0, 0);
+            }
+        }
+    }
+    
+    private function chooseBlowpipe() : Void
+    {
+        if (rand(2) == 0)
+        {
+            blowGun();
+        }
+        else
+        {
+            immaHurtYouBadly();
+        }
+    }
+    
+    override public function defeated(hpVictory : Bool) : Void
+    {
+        SceneLib.bog.lizanScene.winAgainstLizan();
+    }
+    
+    override public function won(hpVictory : Bool, pcCameWorms : Bool) : Void
+    {
+        SceneLib.bog.lizanScene.loseToLizan();
+    }
+    
+    private var SKIN_VARIATIONS(default, never) : Array<Dynamic> = ["emerald", "azure", "scarlet", "violet", "obsidian", "amber", "silver"];
+    
+    public function new()
+    {
+        super();
+        var skinToneAdj : String = randomChoice(SKIN_VARIATIONS);
+        this.skin.growCoat(Skin.SCALES, {
+                    color : skinToneAdj
+                });
+        this.a = "the ";
+        this.short = "lizan rogue";
+        this.imageName = "lizanrogue";
+        this.long = "A rogue lizan male stands before you, watching your every move with quick yellow eyes. His slim body is covered in glistening " + bodyColor + " scales. His strong tail swings back and forth as he shifts his weight, a fluid movement that hints at his speed.  He wears a simple loincloth to protect his modesty to which a small pack is belted.";
+        // this.plural = false;
+        createBreastRow(Appearance.breastCupInverse("flat"));
+        this.createCock(8, 3, CockTypesEnum.LIZARD);
+        this.createCock(8, 3, CockTypesEnum.LIZARD);
+        this.ass.analLooseness = AssClass.LOOSENESS_TIGHT;
+        this.ass.analWetness = AssClass.WETNESS_MOIST;
+        this.tallness = 60 + rand(10);
+        this.hips.type = Hips.RATING_BOYISH;
+        this.butt.type = Butt.RATING_TIGHT;
+        this.skinDesc = "skin";
+        this.hairColor = "black";
+        this.hairLength = 15;
+        initStrTouSpeInte(420, 540, 360, 270);
+        initWisLibSensCor(270, 60, 30, -100);
+        this.weaponName = "claws";
+        this.weaponVerb = "claw";
+        this.weaponAttack = 136;
+        this.armorName = "loincloth";
+        this.armorDef = 200;
+        this.armorMDef = 80;
+        this.bonusHP = 750;
+        this.bonusLust = 146;
+        this.lust = 20;
+        this.lustVuln = .7;
+        this.level = 56;
+        this.gems = 70 + rand(80);
+        this.drop = new WeightedDrop().add(consumables.REPTLUM, 5).add(consumables.SMALL_EGGS, 2).add(consumables.OVIELIX, 2).add(consumables.W_STICK, 1);
+        this.createPerk(PerkLib.Evade, 0, 0, 0, 0);
+        this.createPerk(PerkLib.Precision, 0, 0, 0, 0);
+        this.createPerk(PerkLib.ResistanceI, 0, 0, 0, 0);
+        this.createPerk(PerkLib.Tactician, 0, 0, 0, 0);
+        this.createPerk(PerkLib.LizanRegeneration, 0, 0, 0, 0);
+        this.createPerk(PerkLib.EnemyBeastOrAnimalMorphType, 0, 0, 0, 0);
+        this.special1 = chooseBlowpipe;
+        this.special2 = wingstickThrow;
+        this.special3 = tongueAttack;
+        IMutationsLib.LizanMarrowIM.acquireMutation(this, "none");
+        checkMonster();
+    }
+}
+
+
